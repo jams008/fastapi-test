@@ -1,5 +1,7 @@
 from fastapi import FastAPI
+from bs4 import BeautifulSoup
 import requests
+
 
 app = FastAPI()
 
@@ -26,4 +28,15 @@ def cekheader(url: str):
         return str(regGet.headers)
     except requests.exceptions.ConnectionError:
         return {"Mungkin URL yang kamu masukan tidak valid ", data}
+
+
+@app.get("/scrap-name-product/{url}")
+def scrap(url: str):
+    data = "http://"+url
+    page = requests.get(data)
+    soup = BeautifulSoup(page.content, "html.parser")
+    all_data = soup.find_all("p", class_="is-medium")
+    for hasil in all_data:
+        return hasil
     
+    # return {"hasil": result.prettify()}
